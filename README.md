@@ -353,7 +353,21 @@ See [RESPONSIVE_DESIGN.md](./RESPONSIVE_DESIGN.md) for detailed documentation.
 
 ## 🚀 Production Deployment
 
-### Build for Production
+### Deploy to Vercel (Recommended)
+
+**⚡ Quick Deploy**: See [QUICK_DEPLOY.md](./QUICK_DEPLOY.md) for fastest path to production.
+
+**📚 Complete Guide**: See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for comprehensive instructions.
+
+**Quick Steps**:
+1. Create Vercel Postgres database
+2. Update Prisma schema to PostgreSQL
+3. Push to GitHub
+4. Deploy automatically via Vercel
+
+**⚠️ Important**: SQLite doesn't work on Vercel (serverless). You must use PostgreSQL.
+
+### Build for Production (Self-Hosted)
 
 ```bash
 npm run build
