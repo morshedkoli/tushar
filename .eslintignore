@@ -1,13 +1,18 @@
 # Ignore generated Prisma client
-app/generated/
-app/generated/**/*
+**/app/generated
+**/app/generated/**
+app/generated
+app/generated/**
 
 # Ignore build output
-.next/
-out/
+.next
+.next/**
+out
+out/**
 
 # Ignore node_modules
-node_modules/
+node_modules
+node_modules/**
 
 # Ignore other generated files
 *.config.js

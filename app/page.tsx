@@ -1,5 +1,8 @@
 import prisma from "@/lib/prisma";
 
+// Force dynamic rendering to avoid database access at build time
+export const dynamic = 'force-dynamic';
+
 async function getSummary() {
   try {
     const [accounts, thisMonthIncome, thisMonthExpense, recentTx] = await Promise.all([

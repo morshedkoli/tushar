@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 type Account = { id: number; name: string; type: "BANK" | "MOBILE_BANKING" | "LOAN" | "CASH" };
@@ -17,7 +17,7 @@ type Tx = {
   category?: Category;
 };
 
-export default function TransactionsPage() {
+function TransactionsContent() {
   const [transactions, setTransactions] = useState<Tx[]>([]);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -257,5 +257,17 @@ export default function TransactionsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TransactionsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 flex items-center justify-center">
+        <div className="text-gray-500">Loading transactions...</div>
+      </div>
+    }>
+      <TransactionsContent />
+    </Suspense>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function AuthPage() {
+function AuthContent() {
   const [hasPin, setHasPin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +66,6 @@ export default function AuthPage() {
           value={pin}
           onChange={(e) => setPin(e.target.value)}
           placeholder="4-digit PIN"
-          className="w-full px-3 py-2 border rounded-md bg-transparent"
         />
         {error && <div className="text-sm text-red-600">{error}</div>}
         <button
@@ -78,5 +77,19 @@ export default function AuthPage() {
         </button>
       </form>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center p-6">
+          <div className="text-neutral-500">Loading authentication...</div>
+        </div>
+      }
+    >
+      <AuthContent />
+    </Suspense>
   );
 }
