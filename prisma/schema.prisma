@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Settings {
+  id      Int     @id @default(autoincrement())
+  pinHash String? // Hashed version of the 4-digit PIN
+}
+
+model Account {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  balance      Float
+  type         AccountType
+  transactions Transaction[]
+}
+
+model Category {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          Int             @id @default(autoincrement())
+  amount      Float
+  type        TransactionType
+  description String?
+  date        DateTime        @default(now())
+
+  account     Account         @relation(fields: [accountId], references: [id])
+  accountId   Int
+
+  category    Category        @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+}
+
+enum AccountType {
+  BANK
+  MOBILE_BANKING
+  LOAN
+  CASH
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
