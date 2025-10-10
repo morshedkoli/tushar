@@ -66,6 +66,7 @@ export default function TransactionsPage() {
     setTransactions(await res.json());
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadBasics(); loadTransactions(); }, []);
 
   const submit = async (e: React.FormEvent) => {
@@ -107,7 +108,7 @@ export default function TransactionsPage() {
       <form onSubmit={submit} className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
         <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Add Transaction</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          <select className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" value={type} onChange={(e)=> setType(e.target.value as any)}>
+          <select className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" value={type} onChange={(e)=> setType(e.target.value as "INCOME" | "EXPENSE")}>
             <option value="INCOME">Income</option>
             <option value="EXPENSE">Expense</option>
           </select>

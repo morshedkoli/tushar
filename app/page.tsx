@@ -136,7 +136,7 @@ export default async function Home() {
                     </td>
                   </tr>
                 )}
-                {recent.map((t: any) => (
+                {recent.map((t) => (
                   <tr key={t.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <td className="py-3 px-2 text-gray-700 text-xs">{new Date(t.date).toLocaleDateString()}</td>
                     <td className="py-3 px-2">
