@@ -15,6 +15,16 @@ const navItems = [
     href: "/transactions", 
     icon: "💰"
   },
+  {
+    name: "Receivables",
+    href: "/receivables",
+    icon: "🤝"
+  },
+  {
+    name: "Payables",
+    href: "/payables",
+    icon: "🧾"
+  },
   { 
     name: "Accounts", 
     href: "/accounts", 
@@ -77,14 +87,6 @@ export default function Sidebar() {
             <div>
               <h2 className="text-base font-bold text-gray-900">Tushar</h2>
               <p className="text-xs text-gray-500">Personal Account</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 pt-4">
-            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-lg">
-              💎
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-gray-900">Finance Dashboard</h1>
             </div>
           </div>
         </div>

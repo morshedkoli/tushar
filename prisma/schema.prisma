@@ -42,6 +42,31 @@ model Transaction {
 
   category    Category        @relation(fields: [categoryId], references: [id])
   categoryId  Int
+
+  // Reverse relation: a Due may be settled by a Transaction
+  settledDue  Due?             @relation("DueSettlement")
+}
+
+model Contact {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  dues  Due[]
+}
+
+model Due {
+  id             Int        @id @default(autoincrement())
+  type           DueType
+  status         DueStatus  @default(OPEN)
+  amount         Float
+  description    String?
+  date           DateTime   @default(now())
+
+  contact        Contact    @relation(fields: [contactId], references: [id])
+  contactId      Int
+
+  // When settled, link the transaction used to settle this due
+  settlement     Transaction? @relation("DueSettlement", fields: [settlementTransactionId], references: [id])
+  settlementTransactionId Int? @unique
 }
 
 enum AccountType {
@@ -54,4 +79,14 @@ enum AccountType {
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+enum DueType {
+  RECEIVABLE
+  PAYABLE
+}
+
+enum DueStatus {
+  OPEN
+  SETTLED
 }

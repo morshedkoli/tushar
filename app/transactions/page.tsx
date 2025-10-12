@@ -86,13 +86,7 @@ function TransactionsContent() {
     loadBasics(); // Reload accounts to reflect updated balances
   };
 
-  const remove = async (id: number) => {
-    const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
-    const data = await res.json();
-    if (!res.ok) { alert(data?.error || "Failed to delete"); return; }
-    loadTransactions();
-    loadBasics(); // Reload accounts to reflect updated balances
-  };
+  // Note: Deletion of transactions is disabled per requirements
 
   const filteredCount = useMemo(() => transactions.length, [transactions]);
 
@@ -179,7 +173,7 @@ function TransactionsContent() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">DESCRIPTION</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">CATEGORY</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">ACCOUNT</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500">ACTIONS</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -234,20 +228,13 @@ function TransactionsContent() {
                         {isLoan && <span className="text-xs">💳</span>}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <button 
-                        className="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 rounded text-xs font-medium transition-colors" 
-                        onClick={()=> remove(t.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
+                    
                   </tr>
                 );
               })}
               {transactions.length === 0 && (
                 <tr>
-                  <td className="px-4 py-12 text-center text-gray-400 text-sm" colSpan={8}>
+                  <td className="px-4 py-12 text-center text-gray-400 text-sm" colSpan={7}>
                     No transactions found
                   </td>
                 </tr>

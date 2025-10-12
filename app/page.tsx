@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 async function getSummary() {
   try {
-    const [accounts, thisMonthIncome, thisMonthExpense, recentTx] = await Promise.all([
+    const [accounts, thisMonthIncome, thisMonthExpense, recentTx, receivableOpen, payableOpen] = await Promise.all([
       prisma.account.findMany(),
       prisma.transaction.aggregate({
         _sum: { amount: true },
@@ -26,12 +26,14 @@ async function getSummary() {
         take: 10,
         include: { category: true, account: true },
       }),
+      prisma.due.aggregate({ _sum: { amount: true }, where: { status: "OPEN", type: "RECEIVABLE" } }),
+      prisma.due.aggregate({ _sum: { amount: true }, where: { status: "OPEN", type: "PAYABLE" } }),
     ]);
 
-    const totalBank = accounts.filter(a => a.type === "BANK").reduce((s, a) => s + a.balance, 0);
-    const totalMobile = accounts.filter(a => a.type === "MOBILE_BANKING").reduce((s, a) => s + a.balance, 0);
-    const totalCash = accounts.filter(a => a.type === "CASH").reduce((s, a) => s + a.balance, 0);
-    const totalLoan = accounts.filter(a => a.type === "LOAN").reduce((s, a) => s + a.balance, 0);
+    const totalBank = accounts.filter(a => a.type === "BANK").reduce((s: number, a: { balance: number }) => s + a.balance, 0);
+    const totalMobile = accounts.filter(a => a.type === "MOBILE_BANKING").reduce((s: number, a: { balance: number }) => s + a.balance, 0);
+    const totalCash = accounts.filter(a => a.type === "CASH").reduce((s: number, a: { balance: number }) => s + a.balance, 0);
+    const totalLoan = accounts.filter(a => a.type === "LOAN").reduce((s: number, a: { balance: number }) => s + a.balance, 0);
     const netWorth = totalBank + totalMobile + totalCash - totalLoan;
 
     return {
@@ -41,6 +43,8 @@ async function getSummary() {
         totalCash,
         totalLoan,
         netWorth,
+        receivableOpen: receivableOpen._sum.amount ?? 0,
+        payableOpen: payableOpen._sum.amount ?? 0,
       },
       monthly: {
         income: thisMonthIncome._sum.amount ?? 0,
@@ -56,57 +60,93 @@ async function getSummary() {
 
 export default async function Home() {
   const summary = await getSummary();
-  const totals = summary?.totals || { totalBank: 0, totalMobile: 0, totalCash: 0, totalLoan: 0, netWorth: 0 };
+  const totals = summary?.totals || { totalBank: 0, totalMobile: 0, totalCash: 0, totalLoan: 0, netWorth: 0, receivableOpen: 0, payableOpen: 0 };
   const monthly = summary?.monthly || { income: 0, expense: 0 };
   const recent = summary?.recent || [];
 
-  return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8 space-y-6 pt-16 lg:pt-8">
-      <header className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-xs sm:text-sm text-gray-500 mt-1">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-      </header>
+  // Compute monthly progress distribution (income vs expense)
+  const income = monthly.income;
+  const expense = monthly.expense;
+  const totalFlow = income + expense;
+  const incomePct = totalFlow > 0 ? Math.round((income / totalFlow) * 100) : 0;
+  const expensePct = totalFlow > 0 ? 100 - incomePct : 0;
 
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 transition-colors">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">🏦</span>
-            <div className="text-sm font-medium text-gray-600">Bank</div>
+  return (
+    <div className="min-h-screen p-0 sm:p-0 lg:p-0 pt-16 lg:pt-8">
+      {/* Hero header */}
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="rounded-2xl bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white p-6 sm:p-8 shadow-sm border border-gray-800">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
+              <p className="text-xs sm:text-sm text-gray-300 mt-1">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur px-4 py-3 rounded-xl border border-white/10">
+              <div className="text-xs text-gray-300">Net Worth</div>
+              <div className="text-2xl font-extrabold">৳{totals.netWorth.toFixed(2)}</div>
+            </div>
+          </div>
+          {/* Monthly progress */}
+          <div className="mt-6">
+            <div className="flex items-center justify-between text-xs text-gray-300 mb-2">
+              <span>Monthly Flow</span>
+              <span>
+                <span className="text-green-300 mr-3">Income: ৳{income.toFixed(2)}</span>
+                <span className="text-red-300">Expense: ৳{expense.toFixed(2)}</span>
+              </span>
+            </div>
+            <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-3 bg-green-400" style={{ width: `${incomePct}%` }} />
+              <div className="h-3 bg-red-400 -mt-3" style={{ width: `${expensePct}%` }} />
+            </div>
+            <div className="flex items-center justify-between text-[10px] text-gray-300 mt-1">
+              <span>{incomePct}% Income</span>
+              <span>{expensePct}% Expense</span>
+            </div>
+          </div>
+          {/* Quick actions */}
+          <div className="mt-6 flex flex-wrap gap-2">
+            <a href="/transactions?quick=income" className="px-3 py-2 rounded-lg bg-green-500/10 text-green-200 border border-green-500/20 text-xs hover:bg-green-500/20">+ Add Income</a>
+            <a href="/transactions?quick=expense" className="px-3 py-2 rounded-lg bg-red-500/10 text-red-200 border border-red-500/20 text-xs hover:bg-red-500/20">- Add Expense</a>
+            <a href="/receivables" className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-200 border border-emerald-500/20 text-xs hover:bg-emerald-500/20">↗ Receivables</a>
+            <a href="/payables" className="px-3 py-2 rounded-lg bg-orange-500/10 text-orange-200 border border-orange-500/20 text-xs hover:bg-orange-500/20">↘ Payables</a>
+          </div>
+        </div>
+      </div>
+
+      {/* KPI cards */}
+      <section className="px-4 sm:px-6 lg:px-8 mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-sm transition">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2"><span className="text-xl">🏦</span><span className="text-sm text-gray-600">Bank</span></div>
           </div>
           <div className="text-2xl font-bold text-gray-900">৳{totals.totalBank.toFixed(2)}</div>
         </div>
 
-        <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 transition-colors">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">📱</span>
-            <div className="text-sm font-medium text-gray-600">Mobile Banking</div>
-          </div>
+        <div className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-sm transition">
+          <div className="flex items-center gap-2 mb-2"><span className="text-xl">📱</span><span className="text-sm text-gray-600">Mobile</span></div>
           <div className="text-2xl font-bold text-gray-900">৳{totals.totalMobile.toFixed(2)}</div>
         </div>
 
-        <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 transition-colors">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">💵</span>
-            <div className="text-sm font-medium text-gray-600">Cash</div>
-          </div>
+        <div className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-sm transition">
+          <div className="flex items-center gap-2 mb-2"><span className="text-xl">💵</span><span className="text-sm text-gray-600">Cash</span></div>
           <div className="text-2xl font-bold text-gray-900">৳{totals.totalCash.toFixed(2)}</div>
         </div>
 
-        <div className="bg-white rounded-lg p-5 border border-gray-200 hover:border-gray-300 transition-colors">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">💳</span>
-            <div className="text-sm font-medium text-gray-600">Loans</div>
-          </div>
+        <div className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-sm transition">
+          <div className="flex items-center gap-2 mb-2"><span className="text-xl">💳</span><span className="text-sm text-gray-600">Loans</span></div>
           <div className="text-2xl font-bold text-red-600">৳{totals.totalLoan.toFixed(2)}</div>
         </div>
 
-        <div className="bg-gray-900 rounded-lg p-5 border border-gray-900">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">💎</span>
-            <div className="text-sm font-medium text-gray-300">Net Worth</div>
-          </div>
-          <div className="text-2xl font-bold text-white">৳{totals.netWorth.toFixed(2)}</div>
-        </div>
+        <a href="/receivables" className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-sm transition">
+          <div className="flex items-center gap-2 mb-2"><span className="text-xl">🤝</span><span className="text-sm text-gray-600">Receivables</span></div>
+          <div className="text-2xl font-bold text-emerald-600">৳{totals.receivableOpen.toFixed(2)}</div>
+        </a>
+
+        <a href="/payables" className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-sm transition">
+          <div className="flex items-center gap-2 mb-2"><span className="text-xl">🧾</span><span className="text-sm text-gray-600">Payables</span></div>
+          <div className="text-2xl font-bold text-orange-600">৳{totals.payableOpen.toFixed(2)}</div>
+        </a>
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
