@@ -1,5 +1,5 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -39,7 +39,9 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   return (
     <>
@@ -132,15 +134,35 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <form action="/api/auth/logout" method="post" className="mt-auto pt-6">
+        <div className="mt-auto pt-6">
           <button
-            type="submit"
-            className="w-full px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg font-medium transition-all duration-150 flex items-center justify-center gap-2 text-sm border border-gray-200"
+            type="button"
+            onClick={async () => {
+              try {
+                setLoggingOut(true);
+                const res = await fetch("/api/auth/logout", { method: "POST" });
+                // Follow server redirect if any; otherwise force client navigation
+                if (!res.ok) {
+                  // fallback in case fetch is intercepted
+                  router.replace("/auth");
+                } else {
+                  router.replace("/auth");
+                }
+              } finally {
+                // keep loggingOut true briefly to allow navigation
+              }
+            }}
+            disabled={loggingOut}
+            className={`w-full px-4 py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm border shadow-sm ${
+              loggingOut
+                ? "bg-gray-200 text-gray-500 border-gray-200 cursor-not-allowed"
+                : "bg-gray-900 hover:bg-gray-800 text-white border-gray-900"
+            }`}
           >
-            <span>🚪</span>
-            <span>Logout</span>
+            <span className="text-base">{loggingOut ? "⏳" : "🚪"}</span>
+            <span>{loggingOut ? "Logging out..." : "Logout"}</span>
           </button>
-        </form>
+        </div>
       </div>
     </aside>
     </>
