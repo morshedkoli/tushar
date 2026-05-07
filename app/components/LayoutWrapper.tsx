@@ -13,7 +13,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   return (
     <>
       <Sidebar />
-      <main className="lg:ml-64 min-h-screen">
+      <main className="lg:ml-72 min-h-screen bg-gray-50/50 dark:bg-gray-900">
         {children}
       </main>
     </>

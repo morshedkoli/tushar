@@ -10,31 +10,11 @@ const navItems = [
     href: "/", 
     icon: "📊"
   },
-  { 
-    name: "Transactions", 
-    href: "/transactions", 
-    icon: "💰"
-  },
   {
-    name: "Receivables",
-    href: "/receivables",
-    icon: "🤝"
-  },
-  {
-    name: "Payables",
-    href: "/payables",
-    icon: "🧾"
-  },
-  { 
-    name: "Accounts", 
-    href: "/accounts", 
-    icon: "🏦"
-  },
-  { 
-    name: "Categories", 
-    href: "/categories", 
-    icon: "📁"
-  },
+    name: "People",
+    href: "/people",
+    icon: "👥"
+  }
 ];
 
 export default function Sidebar() {
@@ -45,10 +25,9 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-indigo-600 text-white rounded-xl shadow-lg hover:bg-indigo-700 transition-colors"
         aria-label="Toggle menu"
       >
         {isMobileMenuOpen ? (
@@ -62,104 +41,82 @@ export default function Sidebar() {
         )}
       </button>
 
-      {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
-      <aside className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 shadow-sm overflow-y-auto z-40 transition-transform duration-300 ${
+      <aside className={`fixed left-0 top-0 h-screen w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-white/20 shadow-2xl overflow-y-auto z-40 transition-transform duration-300 ease-out ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       }`}>
-      <div className="p-6 min-h-full flex flex-col">
-        <div className="mb-6 pb-6 border-b border-gray-200">
-          <div className="flex items-center gap-3 mb-4">
-            <Image
-              src="/tushar.png"
-              alt="Tushar"
-              width={48}
-              height={48}
-              className="rounded-full object-cover"
-              unoptimized
-              priority
-            />
+      <div className="p-8 min-h-full flex flex-col">
+        <div className="mb-8 pb-8 border-b border-gray-200/50 dark:border-gray-800/50">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-indigo-500 rounded-full blur-md opacity-40 animate-pulse"></div>
+              <Image
+                src="/tushar.png"
+                alt="Tushar"
+                width={56}
+                height={56}
+                className="rounded-full object-cover ring-2 ring-white dark:ring-gray-800 shadow-md relative z-10"
+                unoptimized
+                priority
+              />
+            </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900">Tushar</h2>
-              <p className="text-xs text-gray-500">Personal Account</p>
+              <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Tushar</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Ledger Manager</p>
             </div>
           </div>
         </div>
 
-        <nav className="space-y-1">
+        <nav className="space-y-3">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/');
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-150 ${
+                className={`group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden ${
                   isActive
-                    ? "bg-gray-900 text-white shadow-sm"
-                    : "text-gray-700 hover:bg-gray-50"
+                    ? "text-white shadow-lg shadow-indigo-500/30"
+                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50"
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span className="font-medium text-sm">{item.name}</span>
+                {isActive && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-100 transition-opacity" />
+                )}
+                <span className={`text-xl relative z-10 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>{item.icon}</span>
+                <span className="font-semibold text-sm relative z-10">{item.name}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs font-semibold text-gray-500 mb-3 px-4">QUICK ACTIONS</p>
-          <div className="space-y-2">
-            <Link
-              href="/transactions?quick=income"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full px-4 py-2.5 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-sm font-medium transition-colors"
-            >
-              + Add Income
-            </Link>
-            <Link
-              href="/transactions?quick=expense"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block w-full px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-lg text-sm font-medium transition-colors"
-            >
-              - Add Expense
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-auto pt-6">
+        <div className="mt-auto pt-8">
           <button
             type="button"
             onClick={async () => {
               try {
                 setLoggingOut(true);
                 const res = await fetch("/api/auth/logout", { method: "POST" });
-                // Follow server redirect if any; otherwise force client navigation
-                if (!res.ok) {
-                  // fallback in case fetch is intercepted
-                  router.replace("/auth");
-                } else {
-                  router.replace("/auth");
-                }
-              } finally {
-                // keep loggingOut true briefly to allow navigation
+                router.replace("/auth");
+              } catch (e) {
+                router.replace("/auth");
               }
             }}
             disabled={loggingOut}
-            className={`w-full px-4 py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 text-sm border shadow-sm ${
+            className={`w-full px-5 py-3.5 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 text-sm shadow-md hover:shadow-lg ${
               loggingOut
-                ? "bg-gray-200 text-gray-500 border-gray-200 cursor-not-allowed"
-                : "bg-gray-900 hover:bg-gray-800 text-white border-gray-900"
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white"
             }`}
           >
-            <span className="text-base">{loggingOut ? "⏳" : "🚪"}</span>
+            <span className="text-lg">{loggingOut ? "⏳" : "🚪"}</span>
             <span>{loggingOut ? "Logging out..." : "Logout"}</span>
           </button>
         </div>

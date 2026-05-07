@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../app/generated/prisma"
@@ -16,17 +13,11 @@ model Settings {
   pinHash String? // Hashed version of the 4-digit PIN
 }
 
-model Account {
+model Person {
   id           Int           @id @default(autoincrement())
   name         String        @unique
-  balance      Float
-  type         AccountType
-  transactions Transaction[]
-}
-
-model Category {
-  id           Int           @id @default(autoincrement())
-  name         String        @unique
+  phone        String?
+  balance      Float         @default(0)
   transactions Transaction[]
 }
 
@@ -37,56 +28,11 @@ model Transaction {
   description String?
   date        DateTime        @default(now())
 
-  account     Account         @relation(fields: [accountId], references: [id])
-  accountId   Int
-
-  category    Category        @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-
-  // Reverse relation: a Due may be settled by a Transaction
-  settledDue  Due?             @relation("DueSettlement")
-}
-
-model Contact {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  dues  Due[]
-}
-
-model Due {
-  id             Int        @id @default(autoincrement())
-  type           DueType
-  status         DueStatus  @default(OPEN)
-  amount         Float
-  description    String?
-  date           DateTime   @default(now())
-
-  contact        Contact    @relation(fields: [contactId], references: [id])
-  contactId      Int
-
-  // When settled, link the transaction used to settle this due
-  settlement     Transaction? @relation("DueSettlement", fields: [settlementTransactionId], references: [id])
-  settlementTransactionId Int? @unique
-}
-
-enum AccountType {
-  BANK
-  MOBILE_BANKING
-  LOAN
-  CASH
+  person      Person          @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId    Int
 }
 
 enum TransactionType {
-  INCOME
-  EXPENSE
-}
-
-enum DueType {
-  RECEIVABLE
-  PAYABLE
-}
-
-enum DueStatus {
-  OPEN
-  SETTLED
+  ADD
+  DEDUCT
 }
