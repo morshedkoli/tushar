@@ -20,37 +20,50 @@ const navItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   return (
     <>
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-indigo-600 text-white rounded-xl shadow-lg hover:bg-indigo-700 transition-colors"
-        aria-label="Toggle menu"
-      >
-        {isMobileMenuOpen ? (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        ) : (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        )}
-      </button>
+      <nav className="fixed inset-x-3 bottom-3 z-50 rounded-[1.35rem] border border-white/70 bg-white/90 p-2 shadow-2xl shadow-gray-900/15 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/90 lg:hidden">
+        <div className="grid grid-cols-3 gap-2">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl text-xs font-bold transition-colors ${
+                  isActive
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                }`}
+              >
+                <span className="text-lg leading-none">{item.icon}</span>
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                setLoggingOut(true);
+                await fetch("/api/auth/logout", { method: "POST" });
+                router.replace("/auth");
+              } catch {
+                router.replace("/auth");
+              }
+            }}
+            disabled={loggingOut}
+            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl text-xs font-bold text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+          >
+            <span className="text-lg leading-none">{loggingOut ? "⏳" : "🚪"}</span>
+            <span>{loggingOut ? "Wait" : "Logout"}</span>
+          </button>
+        </div>
+      </nav>
 
-      {isMobileMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      <aside className={`fixed left-0 top-0 h-screen w-72 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r border-white/20 shadow-2xl overflow-y-auto z-40 transition-transform duration-300 ease-out ${
-        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      }`}>
+      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-72 overflow-y-auto border-r border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl dark:bg-gray-900/80 lg:block">
       <div className="p-8 min-h-full flex flex-col">
         <div className="mb-8 pb-8 border-b border-gray-200/50 dark:border-gray-800/50">
           <div className="flex items-center gap-4">
@@ -80,7 +93,6 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
                 className={`group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden ${
                   isActive
                     ? "text-white shadow-lg shadow-indigo-500/30"
@@ -103,9 +115,9 @@ export default function Sidebar() {
             onClick={async () => {
               try {
                 setLoggingOut(true);
-                const res = await fetch("/api/auth/logout", { method: "POST" });
+                await fetch("/api/auth/logout", { method: "POST" });
                 router.replace("/auth");
-              } catch (e) {
+              } catch {
                 router.replace("/auth");
               }
             }}

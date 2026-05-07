@@ -7,7 +7,7 @@ export async function GET() {
       orderBy: { name: 'asc' },
     });
     return NextResponse.json(people);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to fetch people" }, { status: 500 });
   }
 }
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       },
     });
     return NextResponse.json(person);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to create person" }, { status: 500 });
   }
 }

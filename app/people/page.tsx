@@ -43,19 +43,20 @@ export default function PeoplePage() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-10">
+    <div className="px-4 py-5 sm:px-6 sm:py-8 lg:p-8">
+      <div className="mb-6 flex items-start justify-between gap-4 sm:mb-10 sm:items-center">
         <div>
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+          <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
             People Ledger
           </h1>
-          <p className="text-gray-500 mt-2">Manage balances and transactions</p>
+          <p className="mt-1 text-sm text-gray-500 sm:mt-2 sm:text-base">Manage balances and transactions</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold flex items-center gap-2 transform hover:scale-105"
+          aria-label="Add Person"
+          className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-indigo-700 hover:to-purple-700 hover:shadow-xl sm:h-auto sm:px-6 sm:py-3"
         >
-          <span className="text-xl">+</span> Add Person
+          <span className="text-xl">+</span> <span className="hidden sm:inline">Add Person</span>
         </button>
       </div>
 
@@ -64,12 +65,12 @@ export default function PeoplePage() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 xl:gap-6">
           {people.map((person) => (
             <Link key={person.id} href={`/people/${person.id}`}>
-              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl p-6 hover:shadow-2xl transition-all duration-300 cursor-pointer group transform hover:-translate-y-1">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 flex items-center justify-center text-xl font-bold text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+              <div className="group cursor-pointer rounded-3xl border border-white/20 bg-white/70 p-5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:bg-gray-800/70 sm:p-6">
+                <div className="mb-5 flex items-start justify-between gap-3 sm:mb-6">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 text-lg font-bold text-indigo-600 transition-transform group-hover:scale-110 dark:from-indigo-900/50 dark:to-purple-900/50 dark:text-indigo-400 sm:h-14 sm:w-14 sm:text-xl">
                     {person.name.charAt(0).toUpperCase()}
                   </div>
                   <div className={`px-4 py-1.5 rounded-full text-sm font-bold shadow-sm ${
@@ -83,7 +84,7 @@ export default function PeoplePage() {
                   </div>
                 </div>
                 
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 group-hover:text-indigo-600 transition-colors">
+                <h3 className="mb-1 truncate text-xl font-bold text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-white sm:text-2xl">
                   {person.name}
                 </h3>
                 {person.phone && (
@@ -94,7 +95,7 @@ export default function PeoplePage() {
                 
                 <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
                   <p className="text-sm text-gray-500 mb-1">Current Balance</p>
-                  <p className={`text-3xl font-black ${
+                  <p className={`break-words text-3xl font-black ${
                     person.balance > 0 
                       ? "text-green-600" 
                       : person.balance < 0 
@@ -119,13 +120,14 @@ export default function PeoplePage() {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 w-full max-w-md shadow-2xl transform transition-all">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Add New Person</h2>
+          <div className="w-full max-w-md rounded-3xl bg-white p-5 shadow-2xl transition-all dark:bg-gray-900 sm:p-8">
+            <h2 className="mb-5 text-2xl font-bold text-gray-900 dark:text-white sm:mb-6">Add New Person</h2>
             <form onSubmit={handleAddPerson}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
+                  <label htmlFor="person-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
                   <input
+                    id="person-name"
                     type="text"
                     required
                     value={newName}
@@ -135,8 +137,9 @@ export default function PeoplePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone (Optional)</label>
+                  <label htmlFor="person-phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone (Optional)</label>
                   <input
+                    id="person-phone"
                     type="text"
                     value={newPhone}
                     onChange={(e) => setNewPhone(e.target.value)}
@@ -145,7 +148,7 @@ export default function PeoplePage() {
                   />
                 </div>
               </div>
-              <div className="mt-8 flex gap-3">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}

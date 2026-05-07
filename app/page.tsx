@@ -64,64 +64,64 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-10">
-      <div className="flex justify-between items-end">
+    <div className="mx-auto max-w-7xl space-y-6 px-4 py-5 sm:px-6 sm:py-8 lg:space-y-10 lg:p-8">
+      <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-2">
+          <h1 className="mb-1 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
             Overview
           </h1>
-          <p className="text-gray-500 font-medium">Your personal ledger summary</p>
+          <p className="text-sm font-medium text-gray-500 sm:text-base">Your personal ledger summary</p>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-3xl p-8 text-white shadow-xl shadow-red-500/20 transform hover:-translate-y-1 transition-all">
-          <div className="flex justify-between items-start mb-6">
-            <div className="bg-white/20 p-3 rounded-2xl">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
+        <div className="rounded-3xl bg-gradient-to-br from-red-500 to-red-600 p-5 text-white shadow-xl shadow-red-500/20 transition-all hover:-translate-y-1 sm:p-8">
+          <div className="mb-4 flex items-start justify-between sm:mb-6">
+            <div className="rounded-2xl bg-white/20 p-3">
               <span className="text-2xl">📤</span>
             </div>
           </div>
-          <p className="text-red-100 font-medium text-lg mb-1">Total You Owe</p>
-          <h2 className="text-5xl font-black">৳{totalOwedByMe.toLocaleString()}</h2>
+          <p className="mb-1 text-base font-medium text-red-100 sm:text-lg">Total You Owe</p>
+          <h2 className="break-words text-4xl font-black leading-tight sm:text-5xl">৳{totalOwedByMe.toLocaleString()}</h2>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-3xl p-8 text-white shadow-xl shadow-green-500/20 transform hover:-translate-y-1 transition-all">
-          <div className="flex justify-between items-start mb-6">
-            <div className="bg-white/20 p-3 rounded-2xl">
+        <div className="rounded-3xl bg-gradient-to-br from-green-500 to-green-600 p-5 text-white shadow-xl shadow-green-500/20 transition-all hover:-translate-y-1 sm:p-8">
+          <div className="mb-4 flex items-start justify-between sm:mb-6">
+            <div className="rounded-2xl bg-white/20 p-3">
               <span className="text-2xl">📥</span>
             </div>
           </div>
-          <p className="text-green-100 font-medium text-lg mb-1">Total They Owe You</p>
-          <h2 className="text-5xl font-black">৳{totalOwedToMe.toLocaleString()}</h2>
+          <p className="mb-1 text-base font-medium text-green-100 sm:text-lg">Total They Owe You</p>
+          <h2 className="break-words text-4xl font-black leading-tight sm:text-5xl">৳{totalOwedToMe.toLocaleString()}</h2>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-8">
         {/* Quick People List */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">People</h3>
+        <div className="rounded-3xl border border-white/20 bg-white/70 p-4 shadow-xl backdrop-blur-xl dark:bg-gray-800/70 sm:p-8">
+          <div className="mb-4 flex items-center justify-between sm:mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">People</h3>
             <Link href="/people" className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors">
               View All →
             </Link>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {people.slice(0, 5).map(person => (
               <Link key={person.id} href={`/people/${person.id}`}>
-                <div className="flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group cursor-pointer border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-900 flex items-center justify-center font-bold text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                <div className="group flex items-center justify-between gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-gray-100 hover:bg-gray-50 dark:hover:border-gray-700 dark:hover:bg-gray-700/50 sm:p-4">
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 font-bold text-indigo-600 transition-transform group-hover:scale-110 dark:from-indigo-900 dark:to-purple-900 dark:text-indigo-400 sm:h-12 sm:w-12">
                       {person.name.charAt(0)}
                     </div>
-                    <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors">{person.name}</h4>
+                    <div className="min-w-0">
+                      <h4 className="truncate font-bold text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-white">{person.name}</h4>
                       <p className="text-xs text-gray-500">{person.phone || "No phone"}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className={`font-black text-lg ${
+                  <div className="shrink-0 text-right">
+                    <p className={`text-base font-black sm:text-lg ${
                       person.balance > 0 ? "text-green-600" : person.balance < 0 ? "text-red-600" : "text-gray-500"
                     }`}>
                       ৳{Math.abs(person.balance).toLocaleString()}
@@ -140,21 +140,21 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border border-white/20 shadow-xl rounded-3xl p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Recent Activity</h3>
+        <div className="rounded-3xl border border-white/20 bg-white/70 p-4 shadow-xl backdrop-blur-xl dark:bg-gray-800/70 sm:p-8">
+          <div className="mb-4 flex items-center justify-between sm:mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">Recent Activity</h3>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {recentTransactions.length > 0 ? (
               recentTransactions.map(tx => (
-                <div key={tx.id} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50/80 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
-                  <div>
-                    <p className="font-bold text-gray-900 dark:text-white">{tx.person.name}</p>
+                <div key={tx.id} className="flex items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-gray-50/80 p-3 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900/50 sm:p-4">
+                  <div className="min-w-0">
+                    <p className="truncate font-bold text-gray-900 dark:text-white">{tx.person.name}</p>
                     <p className="text-sm text-gray-500 mt-1">{tx.description || "Transaction"}</p>
                   </div>
-                  <div className="text-right">
-                    <p className={`font-black text-lg ${tx.type === "ADD" ? "text-green-600" : "text-red-600"}`}>
+                  <div className="shrink-0 text-right">
+                    <p className={`text-base font-black sm:text-lg ${tx.type === "ADD" ? "text-green-600" : "text-red-600"}`}>
                       {tx.type === "ADD" ? "+" : "-"} ৳{tx.amount.toLocaleString()}
                     </p>
                     <p className="text-xs text-gray-400 mt-1">{new Date(tx.date).toLocaleDateString()}</p>

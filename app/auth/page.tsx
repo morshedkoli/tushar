@@ -43,8 +43,8 @@ function AuthContent() {
       if (!res.ok) throw new Error(data?.error || "Request failed");
       const next = search.get("next") || "/";
       router.replace(next);
-    } catch (e: any) {
-      setError(e.message || "Something went wrong");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
