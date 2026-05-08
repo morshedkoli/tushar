@@ -11,22 +11,25 @@
     "vercel-build": "prisma generate && prisma migrate deploy && next build --turbopack"
   },
   "dependencies": {
-    "@prisma/client": "^6.17.0",
-    "bcryptjs": "^3.0.2",
-    "next": "15.5.4",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "@prisma/client": "^7.8.0",
+    "bcryptjs": "^3.0.3",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.4",
-    "prisma": "^6.17.0",
+    "better-sqlite3": "^12.9.0",
+    "eslint": "^10",
+    "eslint-config-next": "16.2.6",
+    "prisma": "^7.8.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^6"
   }
 }
