@@ -26,20 +26,41 @@ input {
   touch-action: manipulation;
 }
 
-/* Custom scrollbar for sidebar */
-aside::-webkit-scrollbar {
-  width: 6px;
+/* Premium glass morphism effects */
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-aside::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+.dark .glass {
+  background: rgba(30, 30, 30, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-aside::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-aside::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.8);
+}
+
+/* Smooth animations */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    scroll-behavior: smooth;
+  }
 }

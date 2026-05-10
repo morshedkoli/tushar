@@ -50,13 +50,13 @@ function AuthContent() {
     }
   };
 
-  if (hasPin === null) return <div className="p-6">Loading...</div>;
+  if (hasPin === null) return <div className="flex min-h-screen items-center justify-center p-4">Loading...</div>;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5 rounded-3xl border border-gray-200/50 bg-white/80 p-6 shadow-xl backdrop-blur-xl dark:border-gray-800/50 dark:bg-gray-900/80">
         <div className="space-y-1">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
             {hasPin ? "Welcome back" : "Secure your dashboard"}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -65,7 +65,9 @@ function AuthContent() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="pin" className="block text-sm font-medium text-gray-700 dark:text-gray-300">PIN</label>
+          <label htmlFor="pin" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            PIN
+          </label>
           <input
             id="pin"
             type="password"
@@ -78,10 +80,9 @@ function AuthContent() {
             autoFocus
             aria-invalid={Boolean(error) || undefined}
             aria-describedby={error ? "pin-error" : undefined}
-            className={`w-full h-11 rounded-lg border px-3 text-center tracking-widest text-lg placeholder-gray-400 outline-none transition-all
-              bg-white text-gray-900 border-gray-300 focus:border-gray-900 focus:ring-2 focus:ring-gray-200
-              dark:bg-neutral-800 dark:text-gray-100 dark:border-neutral-700 dark:focus:border-gray-100 dark:focus:ring-neutral-700
-              ${error ? 'border-red-500 focus:ring-red-100 dark:focus:ring-red-900' : ''}`}
+            className={`w-full rounded-xl border bg-gray-50 px-4 py-3.5 text-center text-2xl tracking-widest placeholder-gray-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 ${
+              error ? "border-red-500 focus:ring-red-200" : "border-gray-300"
+            }`}
           />
           {error && <div id="pin-error" className="text-sm text-red-600">{error}</div>}
         </div>
@@ -89,7 +90,7 @@ function AuthContent() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-11 rounded-lg bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="w-full rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? "Please wait..." : hasPin ? "Unlock" : "Set PIN"}
         </button>
@@ -102,7 +103,7 @@ export default function AuthPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="flex min-h-screen items-center justify-center p-6">
           <div className="text-neutral-500">Loading authentication...</div>
         </div>
       }

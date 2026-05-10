@@ -1,6 +1,6 @@
 import { PrismaClient } from "@/app/generated/prisma";
-import Database from "better-sqlite3";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 // Prevent multiple instances of Prisma Client in development
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
@@ -10,9 +10,8 @@ let prisma: PrismaClient;
 if (globalForPrisma.prisma) {
   prisma = globalForPrisma.prisma;
 } else {
-  // Fix the database path to correctly resolve from project root during runtime
-  const dbPath = process.env.DATABASE_URL || "file:./prisma/dev.db";
-  const adapter = new PrismaBetterSqlite3({ url: dbPath });
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const adapter = new PrismaPg(pool);
   prisma = new PrismaClient({ adapter });
 }
 

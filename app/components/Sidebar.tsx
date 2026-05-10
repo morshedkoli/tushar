@@ -1,41 +1,37 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navItems = [
-  { 
-    name: "Dashboard", 
-    href: "/", 
-    icon: "📊"
-  },
-  {
-    name: "People",
-    href: "/people",
-    icon: "👥"
-  }
+  { name: "Dashboard", href: "/", icon: "📊" },
+  { name: "People", href: "/people", icon: "👥" }
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
 
   return (
     <>
-      <nav className="fixed inset-x-3 bottom-3 z-50 rounded-[1.35rem] border border-white/70 bg-white/90 p-2 shadow-2xl shadow-gray-900/15 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/90 lg:hidden">
-        <div className="grid grid-cols-3 gap-2">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-gray-200/80 bg-white/95 shadow-2xl backdrop-blur-xl dark:border-gray-800/80 dark:bg-gray-950/95 md:hidden">
+        <div className="grid grid-cols-3 gap-1 px-2 py-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/");
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl text-xs font-bold transition-colors ${
+                className={`flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl text-xs font-semibold transition-all duration-200 ${
                   isActive
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
-                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                    ? "bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/25 scale-105"
+                    : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
                 }`}
               >
                 <span className="text-lg leading-none">{item.icon}</span>
@@ -55,7 +51,7 @@ export default function Sidebar() {
               }
             }}
             disabled={loggingOut}
-            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl text-xs font-bold text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+            className="flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl text-xs font-semibold text-gray-600 transition-all duration-200 hover:bg-gray-100 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-gray-800"
           >
             <span className="text-lg leading-none">{loggingOut ? "⏳" : "🚪"}</span>
             <span>{loggingOut ? "Wait" : "Logout"}</span>
@@ -63,77 +59,69 @@ export default function Sidebar() {
         </div>
       </nav>
 
-      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-72 overflow-y-auto border-r border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl dark:bg-gray-900/80 lg:block">
-      <div className="p-8 min-h-full flex flex-col">
-        <div className="mb-8 pb-8 border-b border-gray-200/50 dark:border-gray-800/50">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="absolute inset-0 bg-indigo-500 rounded-full blur-md opacity-40 animate-pulse"></div>
-              <Image
-                src="/tushar.png"
-                alt="Tushar"
-                width={56}
-                height={56}
-                className="rounded-full object-cover ring-2 ring-white dark:ring-gray-800 shadow-md relative z-10"
-                unoptimized
-                priority
-              />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Tushar</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Ledger Manager</p>
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-gray-200/80 bg-white/95 shadow-2xl backdrop-blur-xl dark:border-gray-800/80 dark:bg-gray-950/95 md:flex">
+        <div className="flex h-full flex-col p-6">
+          <div className="mb-8 pb-6">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-indigo-500 blur-md opacity-30"></div>
+                <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 text-xl font-bold text-white shadow-lg">
+                  T
+                </div>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Tushar</h2>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Ledger Manager</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <nav className="space-y-3">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/');
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 relative overflow-hidden ${
-                  isActive
-                    ? "text-white shadow-lg shadow-indigo-500/30"
-                    : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                }`}
-              >
-                {isActive && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-100 transition-opacity" />
-                )}
-                <span className={`text-xl relative z-10 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>{item.icon}</span>
-                <span className="font-semibold text-sm relative z-10">{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
+          <nav className="flex-1 space-y-2">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`group relative flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-semibold transition-all duration-200 ${
+                    isActive
+                      ? "text-white shadow-lg shadow-indigo-500/25"
+                      : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  {isActive && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600" />
+                  )}
+                  <span className={`relative z-10 text-lg ${isActive ? "text-white" : "group-hover:scale-110 transition-transform"}`}>
+                    {item.icon}
+                  </span>
+                  <span className="relative z-10">{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
 
-        <div className="mt-auto pt-8">
-          <button
-            type="button"
-            onClick={async () => {
-              try {
-                setLoggingOut(true);
-                await fetch("/api/auth/logout", { method: "POST" });
-                router.replace("/auth");
-              } catch {
-                router.replace("/auth");
-              }
-            }}
-            disabled={loggingOut}
-            className={`w-full px-5 py-3.5 rounded-2xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 text-sm shadow-md hover:shadow-lg ${
-              loggingOut
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white"
-            }`}
-          >
-            <span className="text-lg">{loggingOut ? "⏳" : "🚪"}</span>
-            <span>{loggingOut ? "Logging out..." : "Logout"}</span>
-          </button>
+          <div className="pt-6">
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  setLoggingOut(true);
+                  await fetch("/api/auth/logout", { method: "POST" });
+                  router.replace("/auth");
+                } catch {
+                  router.replace("/auth");
+                }
+              }}
+              disabled={loggingOut}
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-gray-100 px-4 py-3.5 text-sm font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-200 disabled:opacity-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              <span className="text-lg">{loggingOut ? "⏳" : "🚪"}</span>
+              <span>{loggingOut ? "Logging out..." : "Logout"}</span>
+            </button>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
     </>
   );
 }

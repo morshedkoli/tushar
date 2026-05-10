@@ -29,8 +29,6 @@ export default function DashboardPage() {
       try {
         const [peopleRes, txRes] = await Promise.all([
           fetch("/api/people"),
-          // Let's create an endpoint for recent transactions, or just use the UI without it if it fails.
-          // Wait, we don't have a global transactions endpoint yet. Let's create it.
           fetch("/api/summary")
         ]);
         
@@ -57,71 +55,72 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[80vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full bg-indigo-500 blur-md opacity-30"></div>
+          <div className="relative h-12 w-12 animate-spin rounded-full border-2 border-gray-200 border-t-indigo-600"></div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 py-5 sm:px-6 sm:py-8 lg:space-y-10 lg:p-8">
-      <div className="flex items-end justify-between">
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="mb-1 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white sm:text-3xl">
             Overview
           </h1>
-          <p className="text-sm font-medium text-gray-500 sm:text-base">Your personal ledger summary</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Your personal ledger summary</p>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
-        <div className="rounded-3xl bg-gradient-to-br from-red-500 to-red-600 p-5 text-white shadow-xl shadow-red-500/20 transition-all hover:-translate-y-1 sm:p-8">
-          <div className="mb-4 flex items-start justify-between sm:mb-6">
-            <div className="rounded-2xl bg-white/20 p-3">
-              <span className="text-2xl">📤</span>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+        <div className="rounded-3xl bg-gradient-to-br from-red-500 to-red-600 p-5 text-white shadow-xl shadow-red-500/20 sm:p-7">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="rounded-2xl bg-white/20 p-2.5">
+              <span className="text-xl">📤</span>
             </div>
+            <p className="text-sm font-medium text-red-100">Total You Owe</p>
           </div>
-          <p className="mb-1 text-base font-medium text-red-100 sm:text-lg">Total You Owe</p>
-          <h2 className="break-words text-4xl font-black leading-tight sm:text-5xl">৳{totalOwedByMe.toLocaleString()}</h2>
+          <h2 className="text-3xl font-bold sm:text-4xl">৳{totalOwedByMe.toLocaleString()}</h2>
         </div>
 
-        <div className="rounded-3xl bg-gradient-to-br from-green-500 to-green-600 p-5 text-white shadow-xl shadow-green-500/20 transition-all hover:-translate-y-1 sm:p-8">
-          <div className="mb-4 flex items-start justify-between sm:mb-6">
-            <div className="rounded-2xl bg-white/20 p-3">
-              <span className="text-2xl">📥</span>
+        <div className="rounded-3xl bg-gradient-to-br from-green-500 to-green-600 p-5 text-white shadow-xl shadow-green-500/20 sm:p-7">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="rounded-2xl bg-white/20 p-2.5">
+              <span className="text-xl">📥</span>
             </div>
+            <p className="text-sm font-medium text-green-100">Total They Owe You</p>
           </div>
-          <p className="mb-1 text-base font-medium text-green-100 sm:text-lg">Total They Owe You</p>
-          <h2 className="break-words text-4xl font-black leading-tight sm:text-5xl">৳{totalOwedToMe.toLocaleString()}</h2>
+          <h2 className="text-3xl font-bold sm:text-4xl">৳{totalOwedToMe.toLocaleString()}</h2>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-8">
-        {/* Quick People List */}
-        <div className="rounded-3xl border border-white/20 bg-white/70 p-4 shadow-xl backdrop-blur-xl dark:bg-gray-800/70 sm:p-8">
-          <div className="mb-4 flex items-center justify-between sm:mb-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">People</h3>
-            <Link href="/people" className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-3xl border border-gray-200/50 bg-white/80 p-5 shadow-xl backdrop-blur-xl dark:border-gray-800/50 dark:bg-gray-900/80 sm:p-7">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">People</h3>
+            <Link href="/people" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">
               View All →
             </Link>
           </div>
           
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3">
             {people.slice(0, 5).map(person => (
               <Link key={person.id} href={`/people/${person.id}`}>
-                <div className="group flex items-center justify-between gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-gray-100 hover:bg-gray-50 dark:hover:border-gray-700 dark:hover:bg-gray-700/50 sm:p-4">
-                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-100 to-purple-100 font-bold text-indigo-600 transition-transform group-hover:scale-110 dark:from-indigo-900 dark:to-purple-900 dark:text-indigo-400 sm:h-12 sm:w-12">
+                <div className="flex items-center justify-between gap-3 rounded-2xl border border-transparent p-3 transition-all duration-200 hover:border-gray-200 hover:bg-gray-50 dark:hover:border-gray-800 dark:hover:bg-gray-800/50">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 font-bold text-indigo-600 dark:from-indigo-900/50 dark:to-purple-900/50 dark:text-indigo-400">
                       {person.name.charAt(0)}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="truncate font-bold text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-white">{person.name}</h4>
+                      <h4 className="truncate font-semibold text-gray-900 dark:text-white">{person.name}</h4>
                       <p className="text-xs text-gray-500">{person.phone || "No phone"}</p>
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={`text-base font-black sm:text-lg ${
+                    <p className={`text-base font-bold ${
                       person.balance > 0 ? "text-green-600" : person.balance < 0 ? "text-red-600" : "text-gray-500"
                     }`}>
                       ৳{Math.abs(person.balance).toLocaleString()}
@@ -134,35 +133,34 @@ export default function DashboardPage() {
               </Link>
             ))}
             {people.length === 0 && (
-              <p className="text-center text-gray-500 py-4">No people found. Add someone to start.</p>
+              <p className="py-4 text-center text-gray-500">No people found. Add someone to start.</p>
             )}
           </div>
         </div>
 
-        {/* Recent Transactions */}
-        <div className="rounded-3xl border border-white/20 bg-white/70 p-4 shadow-xl backdrop-blur-xl dark:bg-gray-800/70 sm:p-8">
-          <div className="mb-4 flex items-center justify-between sm:mb-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">Recent Activity</h3>
+        <div className="rounded-3xl border border-gray-200/50 bg-white/80 p-5 shadow-xl backdrop-blur-xl dark:border-gray-800/50 dark:bg-gray-900/80 sm:p-7">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">Recent Activity</h3>
           </div>
           
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3">
             {recentTransactions.length > 0 ? (
               recentTransactions.map(tx => (
-                <div key={tx.id} className="flex items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-gray-50/80 p-3 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900/50 sm:p-4">
+                <div key={tx.id} className="flex items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-gray-50/80 p-3 transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900/50">
                   <div className="min-w-0">
-                    <p className="truncate font-bold text-gray-900 dark:text-white">{tx.person.name}</p>
-                    <p className="text-sm text-gray-500 mt-1">{tx.description || "Transaction"}</p>
+                    <p className="truncate font-semibold text-gray-900 dark:text-white">{tx.person.name}</p>
+                    <p className="text-sm text-gray-500">{tx.description || "Transaction"}</p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className={`text-base font-black sm:text-lg ${tx.type === "ADD" ? "text-green-600" : "text-red-600"}`}>
+                    <p className={`text-base font-bold ${tx.type === "ADD" ? "text-green-600" : "text-red-600"}`}>
                       {tx.type === "ADD" ? "+" : "-"} ৳{tx.amount.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">{new Date(tx.date).toLocaleDateString()}</p>
+                    <p className="text-xs text-gray-400">{new Date(tx.date).toLocaleDateString()}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-center text-gray-500 py-4">No recent activity.</p>
+              <p className="py-4 text-center text-gray-500">No recent activity.</p>
             )}
           </div>
         </div>
