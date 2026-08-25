@@ -4,23 +4,37 @@ import prisma from "@/lib/prisma";
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
+    const personId = Number(resolvedParams.id);
+    if (!Number.isInteger(personId)) {
+      return NextResponse.json({ error: "Invalid person id" }, { status: 400 });
+    }
+
     const data = await req.json();
-    const amount = Number(data.amount);
-    const type = data.type as 'ADD' | 'DEDUCT';
-    
+    const amount = Number(data?.amount);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return NextResponse.json({ error: "Amount must be a positive number" }, { status: 400 });
+    }
+
+    const type = data?.type === "ADD" || data?.type === "DEDUCT" ? data.type : null;
+    if (!type) {
+      return NextResponse.json({ error: "Type must be ADD or DEDUCT" }, { status: 400 });
+    }
+
+    const description = typeof data?.description === "string" ? data.description.trim() : "";
+
     const result = await prisma.$transaction(async (tx) => {
       const newTx = await tx.transaction.create({
         data: {
           amount,
           type,
-          description: data.description || null,
-          personId: Number(resolvedParams.id),
+          description: description || null,
+          personId,
         },
       });
 
-      const balanceChange = type === 'ADD' ? amount : -amount;
+      const balanceChange = type === "ADD" ? amount : -amount;
       const updatedPerson = await tx.person.update({
-        where: { id: Number(resolvedParams.id) },
+        where: { id: personId },
         data: {
           balance: { increment: balanceChange },
         },
